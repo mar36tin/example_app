@@ -1,0 +1,36 @@
+---
+kind: Service
+apiVersion: v1
+metadata: 
+  name: exampleservice
+spec:
+  selector: 
+    app: example-appv1
+  ports: 
+    - protocol: "TCP"
+      # port accessible outside cluster
+      nodePort: 30002
+      # port accessible inside cluster
+      port: 8080
+      # port ato forward to inside cluster
+      targetPort: 8080    
+  type: LoadBalancer
+
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: example-app-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: example-appv1
+    spec:
+      containers:
+        - name: example-app
+          image: mar36tin/example_app:1.0.0
+          ports:
+           - containerPort: 8080  
